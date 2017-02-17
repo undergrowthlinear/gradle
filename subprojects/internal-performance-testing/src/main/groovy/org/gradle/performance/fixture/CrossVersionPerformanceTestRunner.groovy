@@ -38,7 +38,7 @@ import org.junit.Assume
 
 import java.util.regex.Pattern
 
-public class CrossVersionPerformanceTestRunner extends PerformanceTestSpec {
+class CrossVersionPerformanceTestRunner extends PerformanceTestSpec {
     private static final Pattern COMMA_OR_SEMICOLON = Pattern.compile('[;,]')
 
     GradleDistribution current
@@ -60,13 +60,9 @@ public class CrossVersionPerformanceTestRunner extends PerformanceTestSpec {
 
     List<String> targetVersions = []
 
-    void addBuildExperimentListener(BuildExperimentListener buildExperimentListener) {
-        buildExperimentListeners.addListener(buildExperimentListener)
-    }
-
     private CompositeBuildExperimentListener buildExperimentListeners = new CompositeBuildExperimentListener()
+    private CompositeInvocationCustomizer invocationCustomizers = new CompositeInvocationCustomizer()
 
-    InvocationCustomizer invocationCustomizer
     GradleExecuterDecorator executerDecorator
 
     CrossVersionPerformanceTestRunner(BuildExperimentRunner experimentRunner, DataReporter<CrossVersionPerformanceResults> reporter, ReleasedVersionDistributions releases, IntegrationTestBuildContext buildContext) {
@@ -233,7 +229,7 @@ public class CrossVersionPerformanceTestRunner extends PerformanceTestSpec {
             .warmUpCount(warmUpRuns)
             .invocationCount(runs)
             .listener(buildExperimentListeners)
-            .invocationCustomizer(invocationCustomizer)
+            .invocationCustomizer(invocationCustomizers)
             .invocation {
                 workingDirectory(workingDir)
                 distribution(new ExecuterDecoratingGradleDistribution(dist, executerDecorator))
@@ -263,18 +259,18 @@ public class CrossVersionPerformanceTestRunner extends PerformanceTestSpec {
     }
 
     void setupCleanupOnOddRounds(String... cleanUpTasks) {
-        invocationCustomizer = new InvocationCustomizer() {
+        addInvocationCustomizer(new InvocationCustomizer() {
             @Override
             def <T extends InvocationSpec> T customize(BuildExperimentInvocationInfo invocationInfo, T invocationSpec) {
                 if (invocationInfo.iterationNumber % 2 == 1) {
                     def builder = ((GradleInvocationSpec) invocationSpec).withBuilder()
                     builder.setTasksToRun(cleanUpTasks as List)
-                    return builder.build()
+                    (T) builder.build()
                 } else {
-                    return invocationSpec
+                    (T) invocationSpec
                 }
             }
-        }
+        })
         addBuildExperimentListener(new BuildExperimentListenerAdapter() {
             @Override
             void afterInvocation(BuildExperimentInvocationInfo invocationInfo, MeasuredOperation operation, BuildExperimentListener.MeasurementCallback measurementCallback) {
@@ -283,5 +279,13 @@ public class CrossVersionPerformanceTestRunner extends PerformanceTestSpec {
                 }
             }
         })
+    }
+
+    void addBuildExperimentListener(BuildExperimentListener buildExperimentListener) {
+        buildExperimentListeners.addListener(buildExperimentListener)
+    }
+
+    void addInvocationCustomizer(InvocationCustomizer invocationCustomizer) {
+        invocationCustomizers.addCustomizer(invocationCustomizer)
     }
 }

@@ -32,7 +32,7 @@ class AbstractTaskOutputCacheJavaPerformanceTest extends AbstractCrossVersionPer
          */
         runner.runs = 40
         runner.setupCleanupOnOddRounds()
-        runner.args = ['-Dorg.gradle.cache.tasks=true', '--parallel']
+        runner.args = ['-Dorg.gradle.cache.tasks=true']
     }
 
     void setupHeapSize(String heapSize) {

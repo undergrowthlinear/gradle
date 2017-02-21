@@ -77,7 +77,7 @@ class LocalTaskOutputCacheJavaPerformanceTest extends AbstractTaskOutputCacheJav
         runner.testProject = testProject
         runner.tasksToRun = tasks
         setupHeapSize(heapSize)
-        runner.warmUpRuns = 8
+        runner.warmUpRuns = 6
         runner.runs = 8
         runner.setupCleanupOnOddRounds()
 

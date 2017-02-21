@@ -65,7 +65,7 @@ class LocalTaskOutputCacheJavaPerformanceTest extends AbstractTaskOutputCacheJav
         def result = runner.run()
 
         then:
-        result // FIXME @wolfs .assertCurrentVersionHasNotRegressed()
+        result.assertCurrentVersionHasNotRegressed()
 
         where:
         [testProject, heapSize, tasks] << scenarios
@@ -94,7 +94,7 @@ class LocalTaskOutputCacheJavaPerformanceTest extends AbstractTaskOutputCacheJav
         def result = runner.run()
 
         then:
-        result // FIXME @wolfs .assertCurrentVersionHasNotRegressed()
+        result.assertCurrentVersionHasNotRegressed()
 
         where:
         [testProject, heapSize, tasks] << scenarios

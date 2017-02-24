@@ -221,11 +221,8 @@ class JavadocWorkAvoidanceIntegrationTest extends AbstractIntegrationSpec {
         when:
         succeeds(":a:javadoc")
         then:
-        // TODO: This isn't correct, but we don't correctly hash duplicate entries in a classpath.
+        result.assertTasksNotSkipped(":a:javadoc")
         result.assertTasksSkipped(":b:compileJava", ":b:processResources", ":b:classes", ":b:jar",
-            ":a:compileJava", ":a:processResources", ":a:classes", ":b:javadoc", ":a:javadoc")
-//        result.assertTasksNotSkipped(":a:javadoc")
-//        result.assertTasksSkipped(":b:compileJava", ":b:processResources", ":b:classes", ":b:jar",
-//            ":a:compileJava", ":a:processResources", ":a:classes", ":b:javadoc")
+            ":a:compileJava", ":a:processResources", ":a:classes", ":b:javadoc")
     }
 }

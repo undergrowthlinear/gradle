@@ -18,12 +18,12 @@ package org.gradle.internal.buildevents;
 
 import org.gradle.api.internal.tasks.TaskExecutionOutcome;
 import org.gradle.api.logging.LogLevel;
-import org.gradle.caching.internal.tasks.statistics.TaskExecutionStatistics;
-import org.gradle.caching.internal.tasks.statistics.TaskExecutionStatisticsListener;
+import org.gradle.internal.statistics.TaskExecutionStatistics;
+import org.gradle.internal.statistics.TaskExecutionStatisticsReporter;
 import org.gradle.internal.logging.text.StyledTextOutput;
 import org.gradle.internal.logging.text.StyledTextOutputFactory;
 
-public class CacheStatisticsReporter implements TaskExecutionStatisticsListener {
+public class CacheStatisticsReporter implements TaskExecutionStatisticsReporter {
     private final StyledTextOutputFactory textOutputFactory;
 
     public CacheStatisticsReporter(StyledTextOutputFactory textOutputFactory) {

@@ -19,8 +19,8 @@ package org.gradle.caching.internal.tasks
 import org.gradle.api.internal.TaskInternal
 import org.gradle.api.internal.TaskOutputCachingState
 import org.gradle.api.internal.tasks.TaskStateInternal
-import org.gradle.caching.internal.tasks.statistics.TaskExecutionStatistics
-import org.gradle.caching.internal.tasks.statistics.TaskExecutionStatisticsListener
+import org.gradle.internal.statistics.TaskExecutionStatistics
+import org.gradle.internal.statistics.TaskExecutionStatisticsReporter
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -28,7 +28,7 @@ import static org.gradle.api.internal.tasks.TaskExecutionOutcome.*
 
 @Subject(TaskExecutionStatisticsEventAdapter)
 class TaskExecutionStatisticsEventAdapterTest extends Specification {
-    def listener = Mock(TaskExecutionStatisticsListener)
+    def listener = Mock(TaskExecutionStatisticsReporter)
     def statisticsEventAdapter = new TaskExecutionStatisticsEventAdapter(listener)
 
     def "test"() {

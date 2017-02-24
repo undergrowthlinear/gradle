@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.gradle.caching.internal.tasks.statistics;
+package org.gradle.internal.statistics;
 
 import com.google.common.collect.ImmutableMap;
 import org.gradle.api.internal.tasks.TaskExecutionOutcome;

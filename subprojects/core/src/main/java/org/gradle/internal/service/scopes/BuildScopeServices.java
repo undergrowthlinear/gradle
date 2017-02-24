@@ -77,7 +77,6 @@ import org.gradle.caching.internal.CompositeBuildCache;
 import org.gradle.caching.internal.DefaultCompositeBuildCacheServiceFactory;
 import org.gradle.caching.internal.DefaultLocalBuildCacheServiceFactory;
 import org.gradle.caching.internal.tasks.TaskExecutionStatisticsEventAdapter;
-import org.gradle.caching.internal.tasks.statistics.TaskExecutionStatisticsListener;
 import org.gradle.caching.local.LocalBuildCache;
 import org.gradle.configuration.BuildConfigurer;
 import org.gradle.configuration.DefaultBuildConfigurer;
@@ -154,6 +153,7 @@ import org.gradle.internal.service.CachingServiceLocator;
 import org.gradle.internal.service.DefaultServiceRegistry;
 import org.gradle.internal.service.ServiceRegistration;
 import org.gradle.internal.service.ServiceRegistry;
+import org.gradle.internal.statistics.TaskExecutionStatisticsReporter;
 import org.gradle.internal.time.TimeProvider;
 import org.gradle.internal.time.TrueTimeProvider;
 import org.gradle.model.internal.inspect.ModelRuleSourceDetector;
@@ -391,7 +391,7 @@ public class BuildScopeServices extends DefaultServiceRegistry {
     }
 
     protected TaskExecutionStatisticsEventAdapter createTaskExecutionStatisticsEventAdapter(ListenerManager listenerManager) {
-        return new TaskExecutionStatisticsEventAdapter(listenerManager.getBroadcaster(TaskExecutionStatisticsListener.class));
+        return new TaskExecutionStatisticsEventAdapter(listenerManager.getBroadcaster(TaskExecutionStatisticsReporter.class));
     }
 
     protected PluginRegistry createPluginRegistry(ClassLoaderScopeRegistry scopeRegistry, PluginInspector pluginInspector) {

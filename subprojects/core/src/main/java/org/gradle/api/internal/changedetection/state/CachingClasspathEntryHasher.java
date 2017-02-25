@@ -16,12 +16,15 @@
 
 package org.gradle.api.internal.changedetection.state;
 
+import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
 import org.gradle.cache.PersistentIndexedCache;
 
 import java.util.List;
 
 public class CachingClasspathEntryHasher implements ClasspathEntryHasher {
+    private static final HashCode NO_SIGNATURE = Hashing.md5().hashString(CachingClasspathEntryHasher.class.getName() + " : no signature", Charsets.UTF_8);
     private final ClasspathEntryHasher delegate;
     private final PersistentIndexedCache<HashCode, HashCode> persistentCache;
 
@@ -36,6 +39,9 @@ public class CachingClasspathEntryHasher implements ClasspathEntryHasher {
 
         HashCode signature = persistentCache.get(contentMd5);
         if (signature != null) {
+            if (signature == NO_SIGNATURE) {
+                return null;
+            }
             return signature;
         }
 
@@ -43,6 +49,8 @@ public class CachingClasspathEntryHasher implements ClasspathEntryHasher {
 
         if (signature!=null) {
             persistentCache.put(contentMd5, signature);
+        } else {
+            persistentCache.put(contentMd5, NO_SIGNATURE);
         }
         return signature;
     }

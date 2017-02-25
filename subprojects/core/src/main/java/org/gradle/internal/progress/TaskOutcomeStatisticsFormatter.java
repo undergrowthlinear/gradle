@@ -15,14 +15,10 @@
  */
 package org.gradle.internal.progress;
 
-import com.google.common.base.Joiner;
 import org.gradle.api.internal.tasks.TaskExecutionOutcome;
 import org.gradle.api.tasks.TaskState;
 import org.gradle.internal.statistics.TaskExecutionStatistics;
 import org.gradle.internal.statistics.TaskExecutionStatisticsAggregator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TaskOutcomeStatisticsFormatter {
     private TaskExecutionStatisticsAggregator stats;
@@ -37,17 +33,19 @@ public class TaskOutcomeStatisticsFormatter {
     }
 
     private String format(TaskExecutionStatistics taskExecutionStatistics) {
-        List<String> outcomes = new ArrayList<String>(TaskExecutionOutcome.values().length);
         final int allTasksCount = taskExecutionStatistics.getAllTasksCount();
+        int tasksAvoided = 0;
+        int tasksExecuted = 0;
         for (TaskExecutionOutcome outcome : TaskExecutionOutcome.values()) {
-            if (taskExecutionStatistics.getTasksCount(outcome) > 0) {
-                String message = outcome.getMessage();
-                if (message == null) {
-                    message = TaskExecutionOutcome.EXECUTED.toString();
-                }
-                outcomes.add(message + " " + Math.round(taskExecutionStatistics.getTasksCount(outcome) * 100.0 / allTasksCount) + '%');
+            switch (outcome) {
+                case EXECUTED: tasksExecuted += taskExecutionStatistics.getTasksCount(outcome); break;
+                default: tasksAvoided += taskExecutionStatistics.getTasksCount(outcome);
             }
         }
-        return " [" + Joiner.on(", ").join(outcomes) + "]";
+        return " [" + formatPercentage(tasksAvoided, allTasksCount) + " AVOIDED, " + formatPercentage(tasksExecuted, allTasksCount) + " EXECUTED]";
+    }
+
+    private String formatPercentage(int num, int total) {
+        return String.valueOf(Math.round(num * 100.0 / total)) + '%';
     }
 }

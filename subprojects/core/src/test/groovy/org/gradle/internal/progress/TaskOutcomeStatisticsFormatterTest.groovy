@@ -36,24 +36,27 @@ class TaskOutcomeStatisticsFormatterTest extends Specification {
         formatter = new TaskOutcomeStatisticsFormatter()
     }
 
-    def "formats outcomes as percentage of total"() {
+    def "groups non-executed work as AVOIDED"() {
         expect:
-        formatter.incrementAndGetProgress(taskState(UP_TO_DATE)) == " [UP-TO-DATE 100%]"
+        formatter.incrementAndGetProgress(taskState(UP_TO_DATE)) == " [100% AVOIDED, 0% EXECUTED]"
+        formatter.incrementAndGetProgress(taskState(FROM_CACHE)) == " [100% AVOIDED, 0% EXECUTED]"
+        formatter.incrementAndGetProgress(taskState(NO_SOURCE)) == " [100% AVOIDED, 0% EXECUTED]"
+        formatter.incrementAndGetProgress(taskState(SKIPPED)) == " [100% AVOIDED, 0% EXECUTED]"
     }
 
     def "formats executed task as EXECUTED"() {
         expect:
-        formatter.incrementAndGetProgress(taskState(EXECUTED)) == " [EXECUTED 100%]"
+        formatter.incrementAndGetProgress(taskState(EXECUTED)) == " [0% AVOIDED, 100% EXECUTED]"
     }
 
     def "formats multiple outcome types"() {
         expect:
-        formatter.incrementAndGetProgress(taskState(SKIPPED)) == " [SKIPPED 100%]"
-        formatter.incrementAndGetProgress(taskState(UP_TO_DATE)) == " [UP-TO-DATE 50%, SKIPPED 50%]"
-        formatter.incrementAndGetProgress(taskState(FROM_CACHE)) == " [FROM-CACHE 33%, UP-TO-DATE 33%, SKIPPED 33%]"
-        formatter.incrementAndGetProgress(taskState(NO_SOURCE)) == " [FROM-CACHE 25%, UP-TO-DATE 25%, SKIPPED 25%, NO-SOURCE 25%]"
-        formatter.incrementAndGetProgress(taskState(EXECUTED)) == " [FROM-CACHE 20%, UP-TO-DATE 20%, SKIPPED 20%, NO-SOURCE 20%, EXECUTED 20%]"
-        formatter.incrementAndGetProgress(taskState(UP_TO_DATE)) == " [FROM-CACHE 17%, UP-TO-DATE 33%, SKIPPED 17%, NO-SOURCE 17%, EXECUTED 17%]"
+        formatter.incrementAndGetProgress(taskState(SKIPPED)) == " [100% AVOIDED, 0% EXECUTED]"
+        formatter.incrementAndGetProgress(taskState(UP_TO_DATE)) == " [100% AVOIDED, 0% EXECUTED]"
+        formatter.incrementAndGetProgress(taskState(FROM_CACHE)) == " [100% AVOIDED, 0% EXECUTED]"
+        formatter.incrementAndGetProgress(taskState(NO_SOURCE)) == " [100% AVOIDED, 0% EXECUTED]"
+        formatter.incrementAndGetProgress(taskState(EXECUTED)) == " [80% AVOIDED, 20% EXECUTED]"
+        formatter.incrementAndGetProgress(taskState(UP_TO_DATE)) == " [83% AVOIDED, 17% EXECUTED]"
     }
 
     private TaskState taskState(TaskExecutionOutcome taskExecutionOutcome) {

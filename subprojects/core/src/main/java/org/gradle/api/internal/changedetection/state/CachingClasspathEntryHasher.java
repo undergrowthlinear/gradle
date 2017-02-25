@@ -21,8 +21,6 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import org.gradle.cache.PersistentIndexedCache;
 
-import java.util.List;
-
 public class CachingClasspathEntryHasher implements ClasspathEntryHasher {
     private static final HashCode NO_SIGNATURE = Hashing.md5().hashString(CachingClasspathEntryHasher.class.getName() + " : no signature", Charsets.UTF_8);
     private final ClasspathEntryHasher delegate;
@@ -53,11 +51,5 @@ public class CachingClasspathEntryHasher implements ClasspathEntryHasher {
             persistentCache.put(contentMd5, NO_SIGNATURE);
         }
         return signature;
-    }
-
-    @Override
-    public List<FileDetails> hashDir(List<FileDetails> fileDetails) {
-        // TODO: Cache the signatures of individual files?
-        return delegate.hashDir(fileDetails);
     }
 }

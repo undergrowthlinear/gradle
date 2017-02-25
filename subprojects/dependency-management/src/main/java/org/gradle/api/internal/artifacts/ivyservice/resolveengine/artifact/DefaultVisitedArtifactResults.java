@@ -52,7 +52,9 @@ public class DefaultVisitedArtifactResults implements VisitedArtifactsResults {
             resolvedArtifactsById.put(id, resolvedArtifacts);
         }
 
-        return new DefaultSelectedArtifactResults(CompositeArtifactSet.of(allArtifactSets), resolvedArtifactsById.build());
+        ResolvedArtifactSet composite = CompositeArtifactSet.of(allArtifactSets);
+        composite = DeferredVisitArtifactSet.of(composite);
+        return new DefaultSelectedArtifactResults(composite, resolvedArtifactsById.build());
     }
 
     private static class DefaultSelectedArtifactResults implements SelectedArtifactResults {

@@ -16,14 +16,9 @@
 
 package org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact;
 
-import com.google.common.collect.Lists;
 import org.gradle.api.artifacts.ResolvedArtifact;
-import org.gradle.api.artifacts.component.ComponentArtifactIdentifier;
-import org.gradle.api.attributes.AttributeContainer;
 import org.gradle.api.tasks.TaskDependency;
-import org.gradle.internal.Pair;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -70,36 +65,9 @@ public class CompositeArtifactSet implements ResolvedArtifactSet {
     }
 
     @Override
-    public void visit(final ArtifactVisitor visitor) {
-        final List<Pair<AttributeContainer, ResolvedArtifact>> visitedArtifacts = Lists.newArrayList();
-
-        ArtifactVisitor deferredArtifactVisitor = new ArtifactVisitor() {
-            @Override
-            public void visitArtifact(AttributeContainer variant, ResolvedArtifact artifact) {
-                visitedArtifacts.add(Pair.of(variant, artifact));
-            }
-
-            @Override
-            public boolean includeFiles() {
-                return visitor.includeFiles();
-            }
-
-            @Override
-            public void visitFile(ComponentArtifactIdentifier artifactIdentifier, AttributeContainer variant, File file) {
-                visitor.visitFile(artifactIdentifier, variant, file);
-            }
-
-            @Override
-            public void visitFailure(Throwable failure) {
-                visitor.visitFailure(failure);
-            }
-        };
+    public void visit(ArtifactVisitor visitor) {
         for (ResolvedArtifactSet set : sets) {
-            set.visit(deferredArtifactVisitor);
-        }
-
-        for (Pair<AttributeContainer, ResolvedArtifact> visitedArtifact : visitedArtifacts) {
-            visitor.visitArtifact(visitedArtifact.getLeft(), visitedArtifact.getRight());
+            set.visit(visitor);
         }
     }
 }

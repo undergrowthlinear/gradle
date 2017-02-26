@@ -1421,13 +1421,19 @@ Found the following transforms:
             }
 
             task resolve(type: Copy) {
+                println "defining artifacts"
                 def artifacts = configurations.compile.incoming.artifactView().attributes { it.attribute(artifactType, 'size') }.artifacts
+                println "setting from"
                 from artifacts.artifactFiles
                 into "\${buildDir}/libs"
                 doLast {
+                    println "collecting files"
                     println "files: " + artifacts.collect { it.file.name }
+                    println "collecting ids"
                     println "ids: " + artifacts.collect { it.id }
+                    println "collecting components"
                     println "components: " + artifacts.collect { it.id.componentIdentifier }
+                    println "collecting variants"
                     println "variants: " + artifacts.collect { it.variant.attributes }
                 }
             }

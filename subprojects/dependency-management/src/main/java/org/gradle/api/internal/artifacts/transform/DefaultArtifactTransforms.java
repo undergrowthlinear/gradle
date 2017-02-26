@@ -177,6 +177,7 @@ public class DefaultArtifactTransforms implements ArtifactTransforms {
         @Override
         public void prepareArtifact(ResolvedArtifact artifact) {
             transformArtifact(artifact);
+            visitor.prepareArtifact(artifact);
         }
 
         @Override

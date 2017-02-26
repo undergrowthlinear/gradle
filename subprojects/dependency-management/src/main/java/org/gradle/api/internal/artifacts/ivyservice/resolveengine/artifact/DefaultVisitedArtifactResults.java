@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableMap;
 import org.gradle.api.Transformer;
 import org.gradle.api.artifacts.component.ComponentIdentifier;
 import org.gradle.api.specs.Spec;
+import org.gradle.internal.operations.BuildOperationProcessor;
 
 import java.util.Collection;
 import java.util.Map;
@@ -28,12 +29,14 @@ import java.util.Set;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 
 public class DefaultVisitedArtifactResults implements VisitedArtifactsResults {
+    private final BuildOperationProcessor buildOperationProcessor;
     private final Map<Long, ArtifactSet> artifactsById;
     private final Set<Long> buildableArtifacts;
 
-    public DefaultVisitedArtifactResults(Map<Long, ArtifactSet> artifactsById, Set<Long> buildableArtifacts) {
+    public DefaultVisitedArtifactResults(Map<Long, ArtifactSet> artifactsById, Set<Long> buildableArtifacts, BuildOperationProcessor buildOperationProcessor) {
         this.artifactsById = artifactsById;
         this.buildableArtifacts = buildableArtifacts;
+        this.buildOperationProcessor = buildOperationProcessor;
     }
 
     @Override
@@ -53,7 +56,7 @@ public class DefaultVisitedArtifactResults implements VisitedArtifactsResults {
         }
 
         ResolvedArtifactSet composite = CompositeArtifactSet.of(allArtifactSets);
-        composite = DeferredVisitArtifactSet.of(composite);
+        composite = DeferredVisitArtifactSet.of(composite, buildOperationProcessor);
         return new DefaultSelectedArtifactResults(composite, resolvedArtifactsById.build());
     }
 

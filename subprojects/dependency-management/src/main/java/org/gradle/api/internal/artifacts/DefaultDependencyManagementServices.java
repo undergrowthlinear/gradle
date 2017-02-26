@@ -76,6 +76,7 @@ import org.gradle.internal.authentication.AuthenticationSchemeRegistry;
 import org.gradle.internal.component.external.model.ModuleComponentArtifactMetadata;
 import org.gradle.internal.component.model.ComponentAttributeMatcher;
 import org.gradle.internal.event.ListenerManager;
+import org.gradle.internal.operations.BuildOperationProcessor;
 import org.gradle.internal.progress.BuildOperationExecutor;
 import org.gradle.internal.reflect.Instantiator;
 import org.gradle.internal.resource.local.LocallyAvailableResourceFinder;
@@ -220,6 +221,7 @@ public class DefaultDependencyManagementServices implements DependencyManagement
                                                        ResolutionResultsStoreFactory resolutionResultsStoreFactory,
                                                        StartParameter startParameter,
                                                        AttributesSchemaInternal attributesSchema,
+                                                       BuildOperationProcessor buildOperationProcessor,
                                                        VariantTransformRegistry variantTransforms,
                                                        ImmutableModuleIdentifierFactory moduleIdentifierFactory,
                                                        ImmutableAttributesFactory attributesFactory,
@@ -234,6 +236,7 @@ public class DefaultDependencyManagementServices implements DependencyManagement
                             resolutionResultsStoreFactory,
                             startParameter.isBuildProjectDependencies(),
                             attributesSchema,
+                            buildOperationProcessor,
                             new DefaultArtifactTransforms(
                                 new VariantAttributeMatchingCache(
                                     variantTransforms,

@@ -29,4 +29,15 @@ public class DefaultBuildOperationQueueFactory implements BuildOperationQueueFac
     public <T extends BuildOperation> BuildOperationQueue<T> create(StoppableExecutor executor, BuildOperationWorker<T> worker) {
         return new DefaultBuildOperationQueue<T>(buildOperationWorkerRegistry.getCurrent(), executor, worker);
     }
+
+    @Override
+    public BuildOperationWorkerRegistry.Completion maybeInit() {
+        // TODO:DAZ This is terrible...
+        try {
+            buildOperationWorkerRegistry.getCurrent();
+            return null;
+        } catch (IllegalStateException e) {
+            return buildOperationWorkerRegistry.operationStart();
+        }
+    }
 }

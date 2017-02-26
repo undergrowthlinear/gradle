@@ -20,4 +20,6 @@ import org.gradle.internal.concurrent.StoppableExecutor;
 
 public interface BuildOperationQueueFactory {
     <T extends BuildOperation> BuildOperationQueue<T> create(StoppableExecutor executor, BuildOperationWorker<T> worker);
+
+    BuildOperationWorkerRegistry.Completion maybeInit();
 }

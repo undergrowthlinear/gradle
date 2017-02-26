@@ -46,26 +46,34 @@ public class DefaultBuildOperationProcessor implements BuildOperationProcessor, 
 
     @Override
     public <T extends BuildOperation> void run(BuildOperationWorker<T> worker, Action<BuildOperationQueue<T>> generator) {
-        BuildOperationQueue<T> queue = buildOperationQueueFactory.create(fixedSizePool, worker);
-
-        List<GradleException> failures = Lists.newArrayList();
-        try {
-            generator.execute(queue);
-        } catch (Exception e) {
-            failures.add(new BuildOperationQueueFailure("There was a failure while populating the build operation queue: " + e.getMessage(), e));
-            queue.cancel();
-        }
+        BuildOperationWorkerRegistry.Completion completion = buildOperationQueueFactory.maybeInit();
 
         try {
-            queue.waitForCompletion();
-        } catch (MultipleBuildOperationFailures e) {
-            failures.add(e);
-        }
+            BuildOperationQueue<T> queue = buildOperationQueueFactory.create(fixedSizePool, worker);
 
-        if (failures.size() == 1) {
-            throw failures.get(0);
-        } else if (failures.size() > 1) {
-            throw new DefaultMultiCauseException(formatMultipleFailureMessage(failures), failures);
+            List<GradleException> failures = Lists.newArrayList();
+            try {
+                generator.execute(queue);
+            } catch (Exception e) {
+                failures.add(new BuildOperationQueueFailure("There was a failure while populating the build operation queue: " + e.getMessage(), e));
+                queue.cancel();
+            }
+
+            try {
+                queue.waitForCompletion();
+            } catch (MultipleBuildOperationFailures e) {
+                failures.add(e);
+            }
+
+            if (failures.size() == 1) {
+                throw failures.get(0);
+            } else if (failures.size() > 1) {
+                throw new DefaultMultiCauseException(formatMultipleFailureMessage(failures), failures);
+            }
+        } finally {
+            if (completion != null) {
+                completion.operationFinish();
+            }
         }
     }
 

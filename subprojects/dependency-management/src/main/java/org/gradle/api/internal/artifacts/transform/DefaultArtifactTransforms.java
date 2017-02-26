@@ -176,34 +176,34 @@ public class DefaultArtifactTransforms implements ArtifactTransforms {
 
         @Override
         public void visitArtifact(AttributeContainer variant, ResolvedArtifact artifact) {
-            List<ResolvedArtifact> transformResults = matchingCache.getTransformedArtifacts(artifact, target);
-            if (transformResults != null) {
+            List<ResolvedArtifact> transformResults = null;
+            try {
+                transformResults = transformArtifact(artifact);
                 for (ResolvedArtifact resolvedArtifact : transformResults) {
                     visitor.visitArtifact(target, resolvedArtifact);
                 }
-                return;
-            }
-
-            List<File> transformedFiles;
-            try {
-                transformedFiles = transform.transform(artifact.getFile());
             } catch (Throwable t) {
                 visitor.visitFailure(t);
-                return;
             }
+        }
 
-            TaskDependency buildDependencies = ((Buildable) artifact).getBuildDependencies();
-            transformResults = Lists.newArrayListWithCapacity(transformedFiles.size());
-            for (File output : transformedFiles) {
-                ComponentArtifactIdentifier newId = new ComponentFileArtifactIdentifier(artifact.getId().getComponentIdentifier(), output.getName());
-                String extension = Files.getFileExtension(output.getName());
-                IvyArtifactName artifactName = new DefaultIvyArtifactName(output.getName(), extension, extension);
-                ResolvedArtifact resolvedArtifact = new DefaultResolvedArtifact(artifact.getModuleVersion().getId(), artifactName, newId, buildDependencies, output);
-                transformResults.add(resolvedArtifact);
-                visitor.visitArtifact(target, resolvedArtifact);
+        private List<ResolvedArtifact> transformArtifact(ResolvedArtifact artifact) {
+            List<ResolvedArtifact> transformResults = matchingCache.getTransformedArtifacts(artifact, target);
+            if (transformResults == null) {
+                List<File> transformedFiles = transform.transform(artifact.getFile());
+                TaskDependency buildDependencies = ((Buildable) artifact).getBuildDependencies();
+                transformResults = Lists.newArrayListWithCapacity(transformedFiles.size());
+                for (File output : transformedFiles) {
+                    ComponentArtifactIdentifier newId = new ComponentFileArtifactIdentifier(artifact.getId().getComponentIdentifier(), output.getName());
+                    String extension = Files.getFileExtension(output.getName());
+                    IvyArtifactName artifactName = new DefaultIvyArtifactName(output.getName(), extension, extension);
+                    ResolvedArtifact resolvedArtifact = new DefaultResolvedArtifact(artifact.getModuleVersion().getId(), artifactName, newId, buildDependencies, output);
+                    transformResults.add(resolvedArtifact);
+                }
+
+                matchingCache.putTransformedArtifact(artifact, this.target, transformResults);
             }
-
-            matchingCache.putTransformedArtifact(artifact, this.target, transformResults);
+            return transformResults;
         }
 
         @Override

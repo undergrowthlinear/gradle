@@ -59,8 +59,12 @@ public class ArtifactBackedArtifactSet implements ResolvedArtifactSet {
     @Override
     public void visit(ArtifactVisitor visitor) {
         for (ResolvedArtifact artifact : artifacts) {
-            visitor.prepareArtifact(artifact);
-            visitor.visitArtifact(variant, artifact);
+            try {
+                visitor.prepareArtifact(artifact);
+                visitor.visitArtifact(variant, artifact);
+            } catch (Throwable t) {
+                visitor.visitFailure(t);
+            }
         }
     }
 
@@ -80,8 +84,12 @@ public class ArtifactBackedArtifactSet implements ResolvedArtifactSet {
 
         @Override
         public void visit(ArtifactVisitor visitor) {
-            visitor.prepareArtifact(artifact);
-            visitor.visitArtifact(variantAttributes, artifact);
+            try {
+                visitor.prepareArtifact(artifact);
+                visitor.visitArtifact(variantAttributes, artifact);
+            } catch (Throwable t) {
+                visitor.visitFailure(t);
+            }
         }
 
         @Override

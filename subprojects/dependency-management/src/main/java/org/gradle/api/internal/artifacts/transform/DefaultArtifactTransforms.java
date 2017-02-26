@@ -176,11 +176,7 @@ public class DefaultArtifactTransforms implements ArtifactTransforms {
 
         @Override
         public void prepareArtifact(ResolvedArtifact artifact) {
-            try {
-                transformArtifact(artifact);
-            } catch (Throwable e) {
-                visitor.visitFailure(e);
-            }
+            transformArtifact(artifact);
         }
 
         @Override

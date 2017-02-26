@@ -49,7 +49,6 @@ public class DeferredVisitArtifactSet implements ResolvedArtifactSet {
 
     @Override
     public void collectBuildDependencies(Collection<? super TaskDependency> dest) {
-        // TODO:DAZ Defer?
         delegate.collectBuildDependencies(dest);
     }
 
@@ -58,6 +57,12 @@ public class DeferredVisitArtifactSet implements ResolvedArtifactSet {
         final List<Pair<AttributeContainer, ResolvedArtifact>> visitedArtifacts = Lists.newArrayList();
 
         ArtifactVisitor deferredArtifactVisitor = new ArtifactVisitor() {
+            @Override
+            public void prepareArtifact(ResolvedArtifact artifact) {
+                // TODO:DAZ Do all of these in parallel
+                visitor.prepareArtifact(artifact);
+            }
+
             @Override
             public void visitArtifact(AttributeContainer variant, ResolvedArtifact artifact) {
                 visitedArtifacts.add(Pair.of(variant, artifact));
@@ -81,6 +86,7 @@ public class DeferredVisitArtifactSet implements ResolvedArtifactSet {
 
         delegate.visit(deferredArtifactVisitor);
 
+        // TODO:DAZ wait for all prepareArtifact calls to complete before this.
         for (Pair<AttributeContainer, ResolvedArtifact> visitedArtifact : visitedArtifacts) {
             visitor.visitArtifact(visitedArtifact.getLeft(), visitedArtifact.getRight());
         }

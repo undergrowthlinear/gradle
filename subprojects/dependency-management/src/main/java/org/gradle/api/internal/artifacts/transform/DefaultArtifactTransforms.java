@@ -175,10 +175,18 @@ public class DefaultArtifactTransforms implements ArtifactTransforms {
         }
 
         @Override
-        public void visitArtifact(AttributeContainer variant, ResolvedArtifact artifact) {
-            List<ResolvedArtifact> transformResults = null;
+        public void prepareArtifact(ResolvedArtifact artifact) {
             try {
-                transformResults = transformArtifact(artifact);
+                transformArtifact(artifact);
+            } catch (Throwable e) {
+                visitor.visitFailure(e);
+            }
+        }
+
+        @Override
+        public void visitArtifact(AttributeContainer variant, ResolvedArtifact artifact) {
+            try {
+                List<ResolvedArtifact> transformResults = transformArtifact(artifact);
                 for (ResolvedArtifact resolvedArtifact : transformResults) {
                     visitor.visitArtifact(target, resolvedArtifact);
                 }

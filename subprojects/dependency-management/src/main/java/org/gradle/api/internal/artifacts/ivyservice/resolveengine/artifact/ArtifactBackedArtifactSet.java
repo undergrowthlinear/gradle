@@ -59,6 +59,7 @@ public class ArtifactBackedArtifactSet implements ResolvedArtifactSet {
     @Override
     public void visit(ArtifactVisitor visitor) {
         for (ResolvedArtifact artifact : artifacts) {
+            visitor.prepareArtifact(artifact);
             visitor.visitArtifact(variant, artifact);
         }
     }
@@ -79,6 +80,7 @@ public class ArtifactBackedArtifactSet implements ResolvedArtifactSet {
 
         @Override
         public void visit(ArtifactVisitor visitor) {
+            visitor.prepareArtifact(artifact);
             visitor.visitArtifact(variantAttributes, artifact);
         }
 

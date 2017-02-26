@@ -27,9 +27,9 @@ import org.gradle.api.internal.artifacts.GlobalDependencyResolutionRules;
 import org.gradle.api.internal.artifacts.ImmutableModuleIdentifierFactory;
 import org.gradle.api.internal.artifacts.ResolveContext;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.ArtifactSet;
-import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.ArtifactVisitor;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.DefaultResolvedArtifactsBuilder;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.DependencyArtifactsVisitor;
+import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.DownloadingArtifactVisitor;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.ResolvedArtifactSet;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.ResolvedVariant;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.SelectedArtifactResults;
@@ -96,7 +96,7 @@ public class DependencyResolvingClasspath extends AbstractFileCollection {
     public Set<File> getFiles() {
         ensureResolved(true);
         final Set<File> result = new LinkedHashSet<File>();
-        resolveResult.artifactsResults.getArtifacts().visit(new ArtifactVisitor() {
+        resolveResult.artifactsResults.getArtifacts().visit(new DownloadingArtifactVisitor() {
             @Override
             public void visitArtifact(AttributeContainer variant, ResolvedArtifact artifact) {
                 result.add(artifact.getFile());

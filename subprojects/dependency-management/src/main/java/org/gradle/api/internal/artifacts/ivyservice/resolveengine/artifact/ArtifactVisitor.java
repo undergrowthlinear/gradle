@@ -26,6 +26,9 @@ import java.io.File;
  * A visitor over the contents of a {@link ResolvedArtifactSet}.
  */
 public interface ArtifactVisitor {
+
+    void prepareArtifact(ResolvedArtifact artifact);
+
     /**
      * Visits an artifact. Artifacts are resolved but not necessarily downloaded.
      */

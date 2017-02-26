@@ -35,6 +35,7 @@ import org.gradle.api.component.Artifact;
 import org.gradle.api.internal.artifacts.DependencyGraphNodeResult;
 import org.gradle.api.internal.artifacts.configurations.ConfigurationInternal;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.ArtifactVisitor;
+import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.DownloadingArtifactVisitor;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.ResolvedArtifactSet;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.ResolvedVariant;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.SelectedArtifactResults;
@@ -326,7 +327,7 @@ public class DefaultLenientConfiguration implements LenientConfiguration, Visite
         return loadTransientGraphResults(getSelectedArtifacts()).getRootNode().getPublicView().getChildren();
     }
 
-    private static class ResolvedFilesCollectingVisitor implements ArtifactVisitor {
+    private static class ResolvedFilesCollectingVisitor extends DownloadingArtifactVisitor {
         private final Collection<? super File> files;
         private final List<Throwable> failures = new ArrayList<Throwable>();
         private final Set<ResolvedArtifact> artifacts = new LinkedHashSet<ResolvedArtifact>();
@@ -367,7 +368,7 @@ public class DefaultLenientConfiguration implements LenientConfiguration, Visite
         }
     }
 
-    private static class ResolvedArtifactCollectingVisitor implements ArtifactVisitor {
+    private static class ResolvedArtifactCollectingVisitor extends DownloadingArtifactVisitor {
         private final Collection<? super ResolvedArtifactResult> artifacts;
         private final Set<ComponentArtifactIdentifier> seenArtifacts = new HashSet<ComponentArtifactIdentifier>();
         private final List<Throwable> failures = new ArrayList<Throwable>();

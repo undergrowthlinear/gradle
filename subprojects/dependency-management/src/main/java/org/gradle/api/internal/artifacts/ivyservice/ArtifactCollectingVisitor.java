@@ -30,6 +30,10 @@ class ArtifactCollectingVisitor implements ArtifactVisitor {
     final Set<ResolvedArtifact> artifacts = Sets.newLinkedHashSet();
 
     @Override
+    public void prepareArtifact(ResolvedArtifact artifact) {
+    }
+
+    @Override
     public void visitArtifact(AttributeContainer variant, ResolvedArtifact artifact) {
         this.artifacts.add(artifact);
     }

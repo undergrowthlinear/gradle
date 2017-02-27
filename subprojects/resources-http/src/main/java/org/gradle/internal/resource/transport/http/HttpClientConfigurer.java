@@ -72,6 +72,8 @@ public class HttpClientConfigurer {
         configureProxy(builder, credentialsProvider, httpSettings);
         configureUserAgent(builder);
         builder.setDefaultCredentialsProvider(credentialsProvider);
+        builder.setMaxConnTotal(20);
+        builder.setMaxConnPerRoute(20);
     }
 
     private void configureSslSocketConnectionFactory(HttpClientBuilder builder, SslContextFactory sslContextFactory) {

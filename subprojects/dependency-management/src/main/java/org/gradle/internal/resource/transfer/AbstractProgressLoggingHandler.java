@@ -21,6 +21,7 @@ import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 public class AbstractProgressLoggingHandler {
     protected final ProgressLoggerFactory progressLoggerFactory;
@@ -29,17 +30,14 @@ public class AbstractProgressLoggingHandler {
         this.progressLoggerFactory = progressLoggerFactory;
     }
 
-    protected ResourceOperation createResourceOperation(String resourceName, ResourceOperation.Type operationType, Class loggingClazz, long contentLength) {
-        ProgressLogger progressLogger = startProgress(operationType.getCapitalized() + " " + resourceName, loggingClazz);
-        return new ResourceOperation(progressLogger, operationType, contentLength);
-    }
-
-    private ProgressLogger startProgress(String description, Class loggingClass) {
-        ProgressLogger progressLogger = progressLoggerFactory.newOperation(loggingClass != null ? loggingClass : getClass());
+    protected ResourceOperation createResourceOperation(URI resource, ResourceOperation.Type operationType, Class loggingClazz, long contentLength) {
+        ProgressLogger progressLogger = progressLoggerFactory.newOperation(loggingClazz != null ? loggingClazz : getClass());
+        String description = operationType.getCapitalized() + " " + resource.toString();
         progressLogger.setDescription(description);
         progressLogger.setLoggingHeader(description);
+        progressLogger.setShortDescription(description.substring(description.lastIndexOf('/') + 1));
         progressLogger.started();
-        return progressLogger;
+        return new ResourceOperation(progressLogger, operationType, contentLength);
     }
 
     protected static class ProgressLoggingInputStream extends InputStream {

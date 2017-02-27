@@ -96,7 +96,6 @@ public class DeferredVisitArtifactSet implements ResolvedArtifactSet {
         delegate.visit(deferredArtifactVisitor);
 
         // Execute all 'prepare' calls in parallel
-        System.out.println("PREPARE IN PARALLEL: " + prepared);
         buildOperationProcessor.run(new Action<BuildOperationQueue<RunnableBuildOperation>>() {
             @Override
             public void execute(BuildOperationQueue<RunnableBuildOperation> buildOperationQueue) {

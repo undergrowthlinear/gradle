@@ -142,8 +142,10 @@ class WorkerExecutorErrorHandlingIntegrationTest extends AbstractWorkerExecutorI
         failureHasCause("A failure occurred while executing org.gradle.test.TestRunnable")
         if (forkMode == 'ForkMode.ALWAYS') {
             failureCauseContains("Could not read message")
+            errorOutput.contains("Caused by: java.lang.ClassNotFoundException: org.gradle.error.Bar")
+        } else {
+            errorOutput.contains("Caused by: java.io.InvalidClassException: org.gradle.error.Bar; class invalid for deserialization")
         }
-        errorOutput.contains("Caused by: java.lang.ClassNotFoundException: org.gradle.error.Bar")
 
         and:
         executedAndNotSkipped(":runAgainInWorker")
